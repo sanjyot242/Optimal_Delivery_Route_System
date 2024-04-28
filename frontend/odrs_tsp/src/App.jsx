@@ -8,10 +8,39 @@ function App() {
     { position: [33.8823, -117.8851], details: 'Initial Marker 1' },
    // { position: [51.515, -0.10], details: 'Initial Marker 2' }
 ]);
+const [route, setRoute] = useState([]);
 
 const handleAddLocation = (newMarker) => {
   setMarkers([...markers, newMarker]);
 };
+
+const handleOptimizeRoute = async () => {
+  try {
+      const response = await fetch('http://127.0.0.1:5000/api/optimize-route', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({points: markers.map(marker => ({
+              lat: marker.position[0],
+              lon: marker.position[1]
+          }))}),
+      });
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      if (data.success) {
+          setRoute(data.route);
+      } else {
+          throw new Error(data.error || 'Route optimization failed');
+      }
+  } catch (error) {
+      console.error('Error fetching route:', error);
+  }
+};
+
+
 return (
   <div className="App bg-gray-100 min-h-screen">
       <header className="bg-blue-500 text-white p-4 text-xl">
@@ -19,7 +48,10 @@ return (
       </header>
       <div className="p-4">
           <AddLocationForm onSubmit={handleAddLocation} />
-          <MapView markers={markers} />
+          <button onClick={handleOptimizeRoute} className="my-4 p-2 bg-green-500 text-white">
+                    Get Optimal Route
+                </button>
+                <MapView markers={markers} route={route} />
       </div>
   </div>
 );
