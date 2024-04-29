@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 import math
+import requests
+
 
 
 app = Flask(__name__)
@@ -38,8 +40,10 @@ def nearest_neighbor(points):
 @cross_origin() 
 def optimize_route():
     data = request.get_json()
+
+    #print ("data req",data)
     points = data.get('points', [])
-    
+
     # Validate and convert data
     if any('lat' not in point or 'lon' not in point for point in points):
         return jsonify({'error': 'Missing lat or lon in some points', 'success': False}), 400
@@ -51,7 +55,25 @@ def optimize_route():
             return jsonify({'error': 'Invalid coordinate format', 'success': False}), 400
     
     optimized_route = nearest_neighbor(points)
-    return jsonify({'route': optimized_route, 'success': True})
+
+    print("optimized points",optimized_route)
+    coordinates = ';'.join([f"{point['lon']},{point['lat']}" for point in optimized_route])
+    locationiq_url = f"https://eu1.locationiq.com/v1/directions/driving/{coordinates}"
+    locationiq_params = {
+        'key': 'pk.564efef458e2028c3da6e7772f0ae570', # Put your LocationIQ API Key here
+        'overview': 'full',
+        'geometries': 'geojson'
+    }
+
+    # Fetch the route from the LocationIQ API
+    route_response = requests.get(locationiq_url, params=locationiq_params)
+    if route_response.status_code == 200:
+        route_data = route_response.json()
+        #print(route_data)
+        return jsonify({'route': route_data['routes'][0]['geometry'],'points':optimized_route, 'success': True , })
+    else:
+        return jsonify({'error': 'Failed to fetch route from LocationIQ', 'success': False}), 500
+    #return jsonify({'route': optimized_route, 'success': True})
     
 
 if __name__ == '__main__':
