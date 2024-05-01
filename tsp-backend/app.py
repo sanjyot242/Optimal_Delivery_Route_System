@@ -87,7 +87,7 @@ def brute_force(points):
 
     return best_route
 
-def genetic_algorithm(points, population_size, generations, mutation_rate):
+def genetic(points, population_size, generations, mutation_rate):
     population = create_initial_population(points, population_size)
     for _ in range(generations):
         # Select top performers for reproduction
@@ -109,7 +109,7 @@ def genetic_algorithm(points, population_size, generations, mutation_rate):
     best_route = min(population, key=lambda x: total_distance(x))
     return best_route
 
-def ant_colony_optimization(points, num_ants, num_iterations, evaporation_rate, alpha, beta):
+def ant_colony(points, num_ants, num_iterations, evaporation_rate, alpha, beta):
     num_cities = len(points)
     pheromone = [[1 / (num_cities * num_cities) for _ in range(num_cities)] for _ in range(num_cities)]
     best_route = None
@@ -180,9 +180,9 @@ def optimize_route():
 
     optimized_route_brute = brute_force(points)
 
-    optimized_route_genetic = genetic_algorithm(points, population_size=100, generations=100, mutation_rate=0.1)
+    optimized_route_genetic = genetic(points, population_size=100, generations=100, mutation_rate=0.1)
 
-    optimized_route_colony = ant_colony_optimization(points, num_ants=10, num_iterations=100, evaporation_rate=0.1, alpha=1, beta=2)
+    optimized_route_colony = ant_colony(points, num_ants=10, num_iterations=100, evaporation_rate=0.1, alpha=1, beta=2)
     
     optimized_route = brute_force(points)
 
