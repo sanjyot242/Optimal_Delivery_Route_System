@@ -1,24 +1,24 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+import React from 'react';
 // Include this sidebar within your main map component to list the route details
-function RouteSidebar  ({ route }) {
-    console.log(route);
-    return (
-    <div className="absolute top-0 my-60 left-0 z-10 h-screen w-64  bg-white overflow-auto p-4">
-        <h3 className="text-lg font-bold mb-4">Route Details</h3>
-        <ol className="list-decimal list-inside">
-            {route && route.map((point, index) => (
-                <li key={index} className="mb-2">
-                    {`Stop ${index + 1}: ${point.lat} , ${point.lon}`} {/* Modify according to your point structure */}
-                </li>
-            ))}
-        </ol>
+function RouteSidebar({ route }) {
+  console.log(route);
+  return (
+    <div className='h-screen w-64 bg-white overflow-auto p-4'>
+      <h3 className='text-lg font-bold mb-4'>Route Details</h3>
+      <ol className='list-decimal list-inside'>
+        {route &&
+          route.map((point, index) => (
+            <li key={index} className='mb-2'>
+              {`Stop ${index + 1}: ${point.lat} , ${point.lon}`}
+            </li>
+          ))}
+      </ol>
     </div>
-    )
-};
+  );
+}
 
 export default RouteSidebar;
-
-
 
 // import React, { useState, useEffect } from "react";
 // import axios from 'axios';
@@ -33,7 +33,7 @@ export default RouteSidebar;
 //                 const promises = route.map(point =>
 //                     axios.get(`https://eu1.locationiq.com/v1/reverse.php?key=${apiKey}&lat=${point.lat}&lon=${point.lon}&format=json&`)
 //                 );
-                
+
 //                 try {
 //                     const results = await Promise.all(promises);
 //                     console.log(results);
