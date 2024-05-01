@@ -164,6 +164,7 @@ def optimize_route():
 
     #print ("data req",data)
     points = data.get('points', [])
+    algorithm = data.get('algorithm', 'brute_force') #defaults to brute force 
     #print ("data points",points)
 
     # Validate and convert data
@@ -176,23 +177,40 @@ def optimize_route():
         except ValueError:
             return jsonify({'error': 'Invalid coordinate format', 'success': False}), 400
     
-    optimized_route_nearest = nearest_neighbor(points)
+    # optimized_route_nearest = nearest_neighbor(points)
 
-    optimized_route_brute = brute_force(points)
+    # optimized_route_brute = brute_force(points)
 
-    optimized_route_genetic = genetic(points, population_size=100, generations=100, mutation_rate=0.1)
+    # optimized_route_genetic = genetic(points, population_size=100, generations=100, mutation_rate=0.1)
 
-    optimized_route_colony = ant_colony(points, num_ants=10, num_iterations=100, evaporation_rate=0.1, alpha=1, beta=2)
+    # optimized_route_colony = ant_colony(points, num_ants=10, num_iterations=100, evaporation_rate=0.1, alpha=1, beta=2)
     
-    optimized_route = brute_force(points)
+    # optimized_route = brute_force(points)
 
-    print("optimized_route_nearest points", optimized_route_nearest)
+    # print("optimized_route_nearest points", optimized_route_nearest)
     
-    print("optimized_route_genetic points", optimized_route_genetic)
+    # print("optimized_route_genetic points", optimized_route_genetic)
 
-    print("optimized_route_brute points", optimized_route_brute)
+    # print("optimized_route_brute points", optimized_route_brute)
 
-    print("optimized_route_colony points", optimized_route_colony)
+    # print("optimized_route_colony points", optimized_route_colony)
+    
+    # print("optimised_brute",optimized_route)
+
+
+    if algorithm.lower() == 'brute_force':
+        optimized_route = brute_force(points)
+    elif algorithm.lower() == 'genetic_algo':
+        optimized_route = genetic(points, population_size=100, generations=100, mutation_rate=0.1)
+    elif algorithm.lower() == 'nearest_neighbor':
+        optimized_route = nearest_neighbor(points)
+    elif algorithm.lower() == 'ant_colony':
+        optimized_route = ant_colony(points, num_ants=10, num_iterations=100, evaporation_rate=0.1, alpha=1, beta=2)
+    else:
+        return jsonify({'error': 'Invalid algorithm specified', 'success': False}), 400
+
+    print("Selected Alog",algorithm)
+    print("Optimized Route Returned from Algorithm",optimized_route)
 
     coordinates = ';'.join([f"{point['lon']},{point['lat']}" for point in optimized_route])
     locationiq_url = f"https://eu1.locationiq.com/v1/directions/driving/{coordinates}"

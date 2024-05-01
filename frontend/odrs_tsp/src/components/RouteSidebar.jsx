@@ -11,6 +11,8 @@ function RouteSidebar({ route }) {
           route.map((point, index) => (
             <li key={index} className='mb-2'>
               {`Stop ${index + 1}: ${point.lat} , ${point.lon}`}
+              <br />
+              {point.location}
             </li>
           ))}
       </ol>

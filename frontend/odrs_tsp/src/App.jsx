@@ -15,6 +15,12 @@ function App() {
 
   const [optimizedOrder, setOptimizedOrder] = useState(null);
 
+  const [algorithm, setAlgorithm] = useState('brute_force'); // Initial algorithm selection
+
+  const handleAlgorithmChange = (event) => {
+    setAlgorithm(event.target.value);
+  };
+
   const handleAddLocation = (newMarker) => {
     setMarkers([...markers, newMarker]);
   };
@@ -30,7 +36,9 @@ function App() {
           points: markers.map((marker) => ({
             lat: marker.position[0],
             lon: marker.position[1],
+            location: marker.details,
           })),
+          algorithm: algorithm,
         }),
       });
       if (!response.ok) {
@@ -91,17 +99,63 @@ function App() {
       </header>
       <div className='p-4'>
         <AddLocationForm onSubmit={handleAddLocation} />
-        <button
-          onClick={handleOptimizeRoute}
-          className='my-4 p-2 bg-green-500 text-white'>
-          Get Optimal Route
-        </button>
-        <MapView
-          markers={markers}
-          route={geoJsonRoute}
-          sidebar={optimizedOrder}
-        />
       </div>
+
+      <div className='flex flex-col w-full px-6'>
+        <div className='flex justify-between'>
+          <label className='inline-flex items-center'>
+            <input
+              type='radio'
+              name='algorithm'
+              value='brute_force'
+              checked={algorithm === 'brute_force'}
+              onChange={handleAlgorithmChange}
+            />
+            <span className='ml-2'>Brute Force</span>
+          </label>
+          <label className='inline-flex items-center'>
+            <input
+              type='radio'
+              name='algorithm'
+              value='genetic_algo'
+              checked={algorithm === 'genetic_algo'}
+              onChange={handleAlgorithmChange}
+            />
+            <span className='ml-2'>Genetic Algo</span>
+          </label>
+          <label className='inline-flex items-center'>
+            <input
+              type='radio'
+              name='algorithm'
+              value='nearest_neighbor'
+              checked={algorithm === 'nearest_neighbor'}
+              onChange={handleAlgorithmChange}
+            />
+            <span className='ml-2'>Nearest Neighbour</span>
+          </label>
+          <label className='inline-flex items-center'>
+            <input
+              type='radio'
+              name='algorithm'
+              value='ant_colony'
+              checked={algorithm === 'ant_colony'}
+              onChange={handleAlgorithmChange}
+            />
+            <span className='ml-2'>Ant Colony</span>
+          </label>
+          <button
+            onClick={handleOptimizeRoute}
+            className='my-4 p-2 bg-green-500 text-white'>
+            Get Optimal Route
+          </button>
+        </div>
+      </div>
+
+      <MapView
+        markers={markers}
+        route={geoJsonRoute}
+        sidebar={optimizedOrder}
+      />
     </div>
   );
 }
